@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Document</title>
+    <style>
+        /* Add a CSS class to highlight the row */
+        .highlight {
+            background-color: skyblue;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" id="searchInput" placeholder="Search...">
+    <table border="1" ; style="border: 1px solid black">
+        <thead>
+            <tr class="th">
+                <th>id</th>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Username</th>
+                <th>Password</th>
+                <th>DOB</th>
+                <th>Image</th>
+                <th>Bloodgroup</th>
+                <th>Height</th>
+                <th>Weight</th>
+                <th>Color</th>
+
+
+
+
+
+            </tr>
+        </thead>
+        <tbody id="tData"></tbody>
+        <tbody id="notFoundMessage" style="display: none;">
+            <tr>
+                <td colspan="15">Item not found in the list</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://dummyjson.com/users");
+        xhr.send();
+        let result = "";
+        xhr.onload = function () {
+            const res = JSON.parse(xhr.response);
+            let arry = [];
+            arry.push(res.users);
+            res.users.forEach((element) => {
+                result += `<tr>
+                    <td>${element.id}</td>
+                    <td>${element.firstName}</td>
+                    <td>${element.lastName}</td>
+                    <td>${element.age}</td>
+                    <td>${element.gender}</td>
+                    <td>${element.email}</td>
+                    <td>${element.phone}</td>
+                    <td>${element.username}</td>
+                    <td>${element.password}</td>
+                    <td>${element.birthDate}</td>
+                    <td><img src="${element.image}" alt="User Image"></td>
+                    <td>${element.bloodGroup}</td>
+                    <td>${element.height}</td>
+                    <td>${element.weight}</td>
+                    <td>${element.eyeColor}</td>
+                </tr>`;
+            });
+            const data = document.getElementById("tData");
+            data.innerHTML = result;
+            
+            const searchInput = document.getElementById('searchInput');
+            const notFoundMessage = document.getElementById('notFoundMessage');
+            searchInput.addEventListener('input', function () {
+                const searchTerm = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#tData tr');
+                let found = false;
+                rows.forEach(row => {
+                    const cells = row.getElementsByTagName('td');
+                    let rowFound = false;
+                    for (let i = 0; i < cells.length; i++) {
+                        const cell = cells[i];
+                        if (cell.textContent.toLowerCase().includes(searchTerm)) {
+                            rowFound = true;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (rowFound) {
+                        row.classList.add('highlight');
+                        row.style.display = '';
+                    } else {
+                        row.classList.remove('highlight');
+                        row.style.display = 'none';
+                    }
+                });
+                if (found) {
+                    notFoundMessage.style.display = 'none';
+                } else {
+                    notFoundMessage.style.display = '';
+                }
+            });
+        };
+    </script>
+</body>
+</html>
